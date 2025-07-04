@@ -126,13 +126,15 @@
   <div class="login-card">
     <form>
       <div class="mb-3">
-        <input type="email" class="form-control" placeholder="Usuário ou e-mail" required />
+        <input type="email" id="emailLogin" class="form-control" placeholder="Usuário ou e-mail" required />
+
       </div>
       <div class="mb-3">
-        <input type="password" class="form-control" placeholder="Senha" required />
+        <input type="password" id="senhaLogin" class="form-control" placeholder="Senha" required />
       </div>
       <div class="d-grid mb-3">
-        <button class="btn btn-primary">Entrar</button>
+        <button class="btn btn-primary" id="btnLogin" type="button">Entrar</button>
+
       </div>
     </form>
 
@@ -279,6 +281,28 @@ window.location.replace("dashboard.html");
   });
 </script>
 
+<script>
+  document.getElementById("btnLogin").addEventListener("click", function () {
+    const email = document.getElementById("emailLogin").value.trim();
+    const senha = document.getElementById("senhaLogin").value.trim();
+
+    if (!email || !senha) {
+      alert("Preencha e-mail e senha");
+      return;
+    }
+
+    firebase.auth().signInWithEmailAndPassword(email, senha)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        alert("✅ Login feito com sucesso!");
+        window.location.href = "dashboard.html";
+      })
+      .catch((error) => {
+        console.error("Erro no login:", error.message);
+        alert("❌ Erro: " + error.message);
+      });
+  });
+</script>
 
 
 
