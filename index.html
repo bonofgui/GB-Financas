@@ -2,81 +2,97 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Finanças</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GB Finanças</title>
 
-  <!-- PWA: Manifesto + iOS fullscreen -->
+  <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Finanças" />
   <link rel="apple-touch-icon" href="icon192.png" />
+  <meta name="theme-color" content="#0d6efd" />
 
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <style>
     body {
-      background-color: #f7f7f7;
-      padding: 20px;
+      background-color: #f4f4f4;
       font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
     }
-
-    .app-header {
-      font-size: 24px;
-      font-weight: bold;
+    .hidden { display: none; }
+    .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
       text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
-
-    .btn-add {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 30px;
-      padding: 0;
     }
   </style>
 </head>
 <body>
-  <div class="app-header">💰 GB Finanças</div>
 
-  <div class="card p-3 mb-3">
-    <h5 class="mb-2">Saldo Atual</h5>
-    <h3 class="text-success">R$ 2.150,00</h3>
+  <!-- Tela de carregamento -->
+  <div id="telaSplash" class="centered">
+    <h2>🔄 Carregando GB Finanças...</h2>
   </div>
 
-  <div class="card p-3 mb-3">
-    <h6>Últimas transações</h6>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item d-flex justify-content-between">
-        <span>💼 Salário</span> <span class="text-success">+ R$ 3.000</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between">
-        <span>🍽️ Almoço</span> <span class="text-danger">- R$ 45</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between">
-        <span>🚕 Uber</span> <span class="text-danger">- R$ 20</span>
-      </li>
-    </ul>
+  <!-- Tela de login -->
+  <div id="telaLogin" class="hidden">
+    <h2 class="mb-3 text-center">💰 GB Finanças</h2>
+    <p class="text-center">Faça login para continuar</p>
+    <div class="d-grid gap-2 mt-4">
+      <button class="btn btn-outline-dark" onclick="irParaCadastro()">Entrar com Google</button>
+    </div>
   </div>
 
-  <button class="btn btn-primary btn-add">+</button>
+  <!-- Tela de cadastro de usuário -->
+  <div id="telaCadastro" class="hidden">
+    <h4 class="mb-3 text-center">👤 Cadastro de Usuário</h4>
+    <form id="formCadastro">
+      <div class="mb-3">
+        <label>Nome completo</label>
+        <input type="text" class="form-control" id="nomeCompleto" required />
+      </div>
+      <div class="mb-3">
+        <label>Apelido (como será mostrado)</label>
+        <input type="text" class="form-control" id="apelido" required />
+      </div>
+      <div class="mb-3">
+        <label>Data de nascimento</label>
+        <input type="date" class="form-control" id="dataNascimento" required />
+      </div>
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-primary">Salvar e Continuar</button>
+      </div>
+    </form>
+  </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(reg => console.log('✅ SW registrado:', reg.scope))
-        .catch(err => console.error('❌ Erro ao registrar SW:', err));
+    // Simulação: troca da splash para tela de login
+    setTimeout(() => {
+      document.getElementById('telaSplash').classList.add('hidden');
+      document.getElementById('telaLogin').classList.remove('hidden');
+    }, 1500);
+
+    function irParaCadastro() {
+      document.getElementById('telaLogin').classList.add('hidden');
+      document.getElementById('telaCadastro').classList.remove('hidden');
     }
+
+    document.getElementById('formCadastro').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('nomeCompleto').value;
+      const apelido = document.getElementById('apelido').value;
+      const nascimento = document.getElementById('dataNascimento').value;
+
+      alert(`✅ Dados salvos!\nNome: ${nome}\nApelido: ${apelido}`);
+
+      // Aqui a gente chamaria o Google Sheets pra salvar os dados
+      // e depois iria pra dashboard
+    });
   </script>
 </body>
 </html>
-
