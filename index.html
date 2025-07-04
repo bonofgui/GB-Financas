@@ -220,6 +220,8 @@
       if (result.user) {
         const user = result.user;
         alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
+window.location.href = "dashboard.html";
+
       }
     })
     .catch((error) => {
