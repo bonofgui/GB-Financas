@@ -17,81 +17,147 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <style>
-    body {
-      background-color: #f4f4f4;
-      font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
+    :root {
+      color-scheme: light dark;
     }
-    .hidden { display: none; }
-    .centered {
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--bg, #f4f4f4);
+      color: var(--text, #000);
+    }
+
+    .tela {
+      display: none;
+      height: 100vh;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 80vh;
+    }
+
+    #telaSplash img {
+      width: 128px;
+      height: 128px;
+      animation: fade 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes fade {
+      from { opacity: 0.7; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.02); }
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 360px;
+      background: var(--card, #fff);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .login-card h2 {
+      margin-bottom: 20px;
+    }
+
+    .google-btn {
+      background: #fff;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      width: 100%;
+    }
+
+    .google-btn img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .links-login {
+      margin-top: 15px;
       text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .links-login a {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #0d6efd;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        --bg: #1c1c1e;
+        --text: #fff;
+        --card: #2c2c2e;
+      }
+
+      .google-btn {
+        background: #2c2c2e;
+        border: 1px solid #444;
+        color: #fff;
+      }
+
+      .links-login a {
+        color: #63b3ed;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Tela de carregamento -->
-  <div id="telaSplash" class="centered">
-    <h2>🔄 Carregando GB Finanças...</h2>
+  <!-- Splash -->
+  <div id="telaSplash" class="tela" style="display:flex;">
+    <img src="icon512.png" alt="Logo" />
   </div>
 
-  <!-- Tela de login -->
-  <div id="telaLogin" class="hidden">
-    <h2 class="mb-3 text-center">💰 GB Finanças</h2>
-    <p class="text-center">Faça login para continuar</p>
-    <div class="d-grid gap-2 mt-4">
-      <button class="btn btn-outline-dark" onclick="irParaCadastro()">Entrar com Google</button>
+  <!-- Login -->
+  <div id="telaLogin" class="tela">
+    <div class="login-card">
+      <h2 class="text-center">GB Finanças</h2>
+      <form>
+        <div class="mb-3">
+          <input type="email" class="form-control" placeholder="Usuário ou e-mail" required />
+        </div>
+        <div class="mb-3">
+          <input type="password" class="form-control" placeholder="Senha" required />
+        </div>
+        <div class="d-grid mb-3">
+          <button class="btn btn-primary">Entrar</button>
+        </div>
+      </form>
+
+      <div class="text-center mb-2">ou</div>
+
+      <button class="google-btn mb-3" onclick="alert('🔐 Login com Google em breve!')">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+        Entrar com Google
+      </button>
+
+      <div class="links-login">
+        <a href="#">Cadastre-se agora</a>
+        <a href="#">Esqueci minha senha</a>
+      </div>
     </div>
-  </div>
-
-  <!-- Tela de cadastro de usuário -->
-  <div id="telaCadastro" class="hidden">
-    <h4 class="mb-3 text-center">👤 Cadastro de Usuário</h4>
-    <form id="formCadastro">
-      <div class="mb-3">
-        <label>Nome completo</label>
-        <input type="text" class="form-control" id="nomeCompleto" required />
-      </div>
-      <div class="mb-3">
-        <label>Apelido (como será mostrado)</label>
-        <input type="text" class="form-control" id="apelido" required />
-      </div>
-      <div class="mb-3">
-        <label>Data de nascimento</label>
-        <input type="date" class="form-control" id="dataNascimento" required />
-      </div>
-      <div class="d-grid mt-4">
-        <button type="submit" class="btn btn-primary">Salvar e Continuar</button>
-      </div>
-    </form>
   </div>
 
   <!-- Scripts -->
   <script>
-    // Troca splash > login
+    // Splash -> Login
     setTimeout(() => {
-      document.getElementById('telaSplash').classList.add('hidden');
-      document.getElementById('telaLogin').classList.remove('hidden');
-    }, 1500);
+      document.getElementById('telaSplash').style.display = 'none';
+      document.getElementById('telaLogin').style.display = 'flex';
+    }, 2000);
 
-    function irParaCadastro() {
-      document.getElementById('telaLogin').classList.add('hidden');
-      document.getElementById('telaCadastro').classList.remove('hidden');
-    }
-
-    document.getElementById('formCadastro').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('nomeCompleto').value;
-      const apelido = document.getElementById('apelido').value;
-      const nascimento = document.getElementById('dataNascimento').value;
-      alert(`✅ Dados salvos!\nNome: ${nome}\nApelido: ${apelido}`);
-    });
-
-    // Service Worker com atualização automática
+    // Service Worker com aviso de atualização
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js").then((reg) => {
         console.log("✅ SW registrado:", reg.scope);
