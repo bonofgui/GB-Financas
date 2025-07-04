@@ -199,7 +199,7 @@
     }
   </script>
   
-  <script>
+<script>
   // Config do Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
@@ -213,21 +213,29 @@
   // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Login com Google
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithPopup(provider)
-      .then((result) => {
+  // Executado quando o usuário volta do login Google
+  firebase.auth().getRedirectResult()
+    .then((result) => {
+      if (result.user) {
         const user = result.user;
         alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
-        // Aqui você pode redirecionar para dashboard ou salvar o UID no localStorage
-      })
-      .catch((error) => {
-        console.error("Erro no login:", error);
+        // Aqui você pode redirecionar para outra tela
+      }
+    })
+    .catch((error) => {
+      console.error("Erro no login:", error);
+      if (error.message && !error.message.includes('no redirect')) {
         alert("❌ Falha ao entrar com Google.");
-      });
+      }
+    });
+
+  // Chama login via redirecionamento
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
   }
 </script>
+
 
 
 </body>
