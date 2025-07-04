@@ -201,7 +201,7 @@
   </script>
   
 <script>
-  // Config Firebase (mantém igual)
+  // Config Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
     authDomain: "gb-financas.firebaseapp.com",
@@ -214,31 +214,33 @@
   // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Lida com o retorno do login
-  firebase.auth().getRedirectResult()
-    .then((result) => {
-      if (result.user) {
-        const user = result.user;
-        alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
-window.location.href = "dashboard.html";
-
-      }
-    })
-    .catch((error) => {
-      console.error("Erro no login:", error);
-      if (error.message && !error.message.includes('no redirect')) {
-        alert("❌ Falha ao entrar com Google.");
-      }
-    });
-
-  // Espera carregar a página inteira antes de associar os eventos
+  // Aguarda a página carregar
   window.onload = function () {
+    // ⬇️ Checa se login foi feito após redirect
+    firebase.auth().getRedirectResult()
+      .then((result) => {
+        if (result.user) {
+          const user = result.user;
+          alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
+          // Redireciona para o dashboard
+          window.location.href = "dashboard.html";
+        }
+      })
+      .catch((error) => {
+        console.error("Erro no login:", error);
+        if (error.message && !error.message.includes('no redirect')) {
+          alert("❌ Falha ao entrar com Google.");
+        }
+      });
+
+    // Botão de login com Google
     document.getElementById("btnGoogle").addEventListener("click", () => {
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithRedirect(provider);
     });
   };
 </script>
+
 
 
 
