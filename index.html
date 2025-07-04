@@ -218,11 +218,12 @@
     const btn = document.getElementById("btnGoogle");
 
     // Se o cara já está logado, manda direto pro dashboard
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        window.location.href = "dashboard.html";
-      }
-    });
+   firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    window.location.replace("dashboard.html");
+  }
+});
+
 
     // Clicou no botão Google → abre o popup
     btn.addEventListener("click", () => {
@@ -230,8 +231,9 @@
 firebase.auth().signInWithPopup(provider)
   .then((result) => {
     const user = result.user;
-    alert(`✅ Login feito!\n${user.displayName}`);
-    window.location.href = "dashboard.html";
+   alert(`✅ Login feito!\n${user.displayName}`);
+window.location.replace("dashboard.html");
+
   })
 
         .catch((error) => {

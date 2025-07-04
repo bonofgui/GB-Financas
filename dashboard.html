@@ -71,13 +71,14 @@
 
   firebase.initializeApp(firebaseConfig);
 
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      document.getElementById('userName').textContent = user.displayName || "Usuário";
-    } else {
-      window.location.href = "index.html"; // se não logado, volta pro login
-    }
-  });
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    document.getElementById('userName').textContent = user.displayName || "Usuário";
+  } else {
+    window.location.replace("index.html"); // impede voltar com swipe/seta
+  }
+});
+
 
   function logout() {
   firebase.auth().signOut().then(() => {
