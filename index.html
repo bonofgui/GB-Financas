@@ -70,8 +70,9 @@
     </form>
   </div>
 
+  <!-- Scripts -->
   <script>
-    // Simulação: troca da splash para tela de login
+    // Troca splash > login
     setTimeout(() => {
       document.getElementById('telaSplash').classList.add('hidden');
       document.getElementById('telaLogin').classList.remove('hidden');
@@ -87,12 +88,44 @@
       const nome = document.getElementById('nomeCompleto').value;
       const apelido = document.getElementById('apelido').value;
       const nascimento = document.getElementById('dataNascimento').value;
-
       alert(`✅ Dados salvos!\nNome: ${nome}\nApelido: ${apelido}`);
-
-      // Aqui a gente chamaria o Google Sheets pra salvar os dados
-      // e depois iria pra dashboard
     });
+
+    // Service Worker com atualização automática
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js").then((reg) => {
+        console.log("✅ SW registrado:", reg.scope);
+
+        reg.onupdatefound = () => {
+          const novaVersao = reg.installing;
+          novaVersao.onstatechange = () => {
+            if (novaVersao.state === "installed") {
+              if (navigator.serviceWorker.controller) {
+                const aviso = document.createElement("div");
+                aviso.innerText = "💡 Atualização disponível — toque para atualizar";
+                aviso.style.position = "fixed";
+                aviso.style.bottom = "20px";
+                aviso.style.left = "50%";
+                aviso.style.transform = "translateX(-50%)";
+                aviso.style.background = "#ffc107";
+                aviso.style.color = "#000";
+                aviso.style.padding = "12px 20px";
+                aviso.style.borderRadius = "10px";
+                aviso.style.boxShadow = "0 0 8px rgba(0,0,0,0.2)";
+                aviso.style.cursor = "pointer";
+                aviso.style.zIndex = "9999";
+                aviso.onclick = () => {
+                  window.location.reload();
+                };
+                document.body.appendChild(aviso);
+              }
+            }
+          };
+        };
+      }).catch((err) => {
+        console.error("❌ Erro ao registrar SW:", err);
+      });
+    }
   </script>
 </body>
 </html>
