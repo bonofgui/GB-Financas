@@ -1,5 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -132,10 +138,11 @@
 
     <div class="text-center mb-2">ou</div>
 
-    <button class="google-btn mb-3" onclick="alert('🔐 Login com Google em breve!')">
-      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
-      Entrar com Google
-    </button>
+  <button class="google-btn mb-3" onclick="loginGoogle()">
+  <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+  Entrar com Google
+</button>
+
 
     <div class="links-login d-flex justify-content-center gap-3 flex-wrap">
       <a href="#">Cadastre-se agora</a>
@@ -191,5 +198,37 @@
       });
     }
   </script>
+  
+  <script>
+  // Config do Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
+    authDomain: "gb-financas.firebaseapp.com",
+    projectId: "gb-financas",
+    storageBucket: "gb-financas.firebasestorage.app",
+    messagingSenderId: "1066695487549",
+    appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
+  };
+
+  // Inicializa Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Login com Google
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
+        // Aqui você pode redirecionar para dashboard ou salvar o UID no localStorage
+      })
+      .catch((error) => {
+        console.error("Erro no login:", error);
+        alert("❌ Falha ao entrar com Google.");
+      });
+  }
+</script>
+
+
 </body>
 </html>
