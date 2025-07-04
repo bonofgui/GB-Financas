@@ -138,10 +138,11 @@
 
     <div class="text-center mb-2">ou</div>
 
-  <button class="google-btn mb-3" onclick="loginGoogle()">
+<button id="btnGoogle" class="google-btn mb-3">
   <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
   Entrar com Google
 </button>
+
 
 
     <div class="links-login d-flex justify-content-center gap-3 flex-wrap">
@@ -200,7 +201,7 @@
   </script>
   
 <script>
-  // Config do Firebase
+  // Config Firebase (mantém igual)
   const firebaseConfig = {
     apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
     authDomain: "gb-financas.firebaseapp.com",
@@ -213,13 +214,12 @@
   // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Executado quando o usuário volta do login Google
+  // Lida com o retorno do login
   firebase.auth().getRedirectResult()
     .then((result) => {
       if (result.user) {
         const user = result.user;
         alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
-        // Aqui você pode redirecionar para outra tela
       }
     })
     .catch((error) => {
@@ -229,12 +229,15 @@
       }
     });
 
-  // Chama login via redirecionamento
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-  }
+  // Espera carregar a página inteira antes de associar os eventos
+  window.onload = function () {
+    document.getElementById("btnGoogle").addEventListener("click", () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithRedirect(provider);
+    });
+  };
 </script>
+
 
 
 
