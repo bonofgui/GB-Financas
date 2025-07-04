@@ -145,6 +145,7 @@
 
 
 
+
     <div class="links-login d-flex justify-content-center gap-3 flex-wrap">
       <a href="#">Cadastre-se agora</a>
       <a href="#">Esqueci minha senha</a>
@@ -201,7 +202,6 @@
   </script>
   
 <script>
-  // Config Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
     authDomain: "gb-financas.firebaseapp.com",
@@ -211,32 +211,32 @@
     appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
   };
 
-  // Inicializa Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Aguarda a página carregar
+  // Assim que a página carregar
   window.onload = function () {
-    // ⬇️ Checa se login foi feito após redirect
-    firebase.auth().getRedirectResult()
-      .then((result) => {
-        if (result.user) {
-          const user = result.user;
-          alert(`✅ Login realizado!\n\n👤 ${user.displayName}\n📧 ${user.email}`);
-          // Redireciona para o dashboard
-          window.location.href = "dashboard.html";
-        }
-      })
-      .catch((error) => {
-        console.error("Erro no login:", error);
-        if (error.message && !error.message.includes('no redirect')) {
-          alert("❌ Falha ao entrar com Google.");
-        }
-      });
+    const btn = document.getElementById("btnGoogle");
 
-    // Botão de login com Google
-    document.getElementById("btnGoogle").addEventListener("click", () => {
+    // Se o cara já está logado, manda direto pro dashboard
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    // Clicou no botão Google → abre o popup
+    btn.addEventListener("click", () => {
       const provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithRedirect(provider);
+      firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          alert(`✅ Login feito!\n${user.displayName}`);
+          window.location.href = "dashboard.html";
+        })
+        .catch((error) => {
+          console.error("Erro no login:", error);
+          alert("❌ Erro ao entrar com Google.");
+        });
     });
   };
 </script>
