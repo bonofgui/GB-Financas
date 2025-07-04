@@ -147,8 +147,34 @@
 
 
     <div class="links-login d-flex justify-content-center gap-3 flex-wrap">
-      <a href="#">Cadastre-se agora</a>
+     <a href="#" id="linkCadastro">Cadastre-se agora</a>
+
       <a href="#">Esqueci minha senha</a>
+    </div>
+  </div>
+</div>
+
+<!-- Tela de cadastro -->
+<div id="telaCadastro" class="tela">
+  <div class="login-card">
+    <h4 class="text-center mb-4">📝 Criar conta</h4>
+    <form id="formCadastro">
+      <input type="text" class="form-control mb-2" placeholder="Nome completo" id="nome" required />
+      <input type="text" class="form-control mb-2" placeholder="Apelido" id="apelido" required />
+      <input type="email" class="form-control mb-2" placeholder="E-mail" id="email" required />
+      <input type="date" class="form-control mb-2" id="nascimento" required />
+      <input type="text" class="form-control mb-2" placeholder="País" id="pais" required />
+      <input type="text" class="form-control mb-2" placeholder="Telefone" id="telefone" required />
+      <input type="password" class="form-control mb-2" placeholder="Senha" id="senha" required />
+      <input type="password" class="form-control mb-3" placeholder="Confirmar senha" id="confirmar" required />
+      <div class="d-grid">
+        <button class="btn btn-primary" type="submit">Cadastrar</button>
+      </div>
+    </form>
+
+    <!-- 🔙 Botão voltar para login -->
+    <div class="text-center mt-3">
+      <a href="#" id="voltarLogin">🔙 Voltar para login</a>
     </div>
   </div>
 </div>
@@ -243,6 +269,16 @@ window.location.replace("dashboard.html");
     });
   };
 </script>
+
+<script>
+  // Alternar para tela de cadastro ao clicar no link
+  document.getElementById("linkCadastro").addEventListener("click", function(e) {
+    e.preventDefault();
+    document.getElementById("telaLogin").style.display = "none";
+    document.getElementById("telaCadastro").style.display = "flex";
+  });
+</script>
+
 
 
 
