@@ -140,12 +140,7 @@
 
         <div class="text-center mb-2">ou</div>
 
-        <button id="btnGoogle" class="google-btn mb-3">
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
-          Entrar com Google
-        </button>
-
-        <div class="links-login">
+             <div class="links-login">
           <a href="#" id="linkCadastro">Cadastre-se agora</a> | 
           <a href="#">Esqueci minha senha</a>
         </div>
@@ -244,6 +239,7 @@
     });
 
     // Cadastro
+    // Cadastro
     document.getElementById("formCadastro").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -265,6 +261,13 @@
           alert("❌ Erro ao cadastrar: " + error.message);
         });
     });
+
+    // 🔒 Bloqueia voltar no mobile
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+      history.go(1);
+    };
+
   </script>
 </body>
 </html>
