@@ -3,9 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- PWA iOS fullscreen -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon512.png" />
+
   <title>GB Finanças</title>
 
-  <!-- Firebase -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
@@ -13,106 +20,46 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
   <style>
-    :root {
-      --verde-musgo: #1f3c2c;
-      color-scheme: light dark;
-    }
-
+    :root { --verde-musgo: #1f3c2c; color-scheme: light dark; }
     html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-      overscroll-behavior: none; /* 🔒 bloqueia swipe voltar */
+      margin: 0; padding: 0; height: 100%; overflow: hidden;
+      overscroll-behavior: none; touch-action: none;
       font-family: 'Segoe UI', sans-serif;
-      background-color: var(--verde-musgo);
-      color: #fff;
+      background-color: var(--verde-musgo); color: #fff;
     }
-
-    .tela {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 99;
+    .tela { position: fixed; top:0; left:0; width:100vw; height:100vh;
+      display: none; justify-content:center; align-items:center;
+      padding:20px; box-sizing:border-box; z-index:99;
     }
-
-    #telaSplash {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: var(--verde-musgo);
-      z-index: 100;
+    #telaSplash { display:flex; flex-direction:column; justify-content:center; align-items:center; background:var(--verde-musgo); }
+    #telaSplash img { width:128px; height:128px;
+      animation:fade 1.2s ease-in-out infinite alternate;
     }
-
-    #telaSplash img {
-      width: 128px;
-      height: 128px;
-      animation: fade 1.2s ease-in-out infinite alternate;
+    @keyframes fade { from{opacity:0.7;transform:scale(0.98);} to{opacity:1;transform:scale(1.02);} }
+    .login-card { width:100%; max-width:360px; background:rgba(255,255,255,0.7);
+      border-radius:16px; padding:30px; box-shadow:0 8px 20px rgba(0,0,0,0.08); color:#000;
     }
-
-    @keyframes fade {
-      from { opacity: 0.7; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1.02); }
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 360px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      color: #000;
-    }
-
-    .btn-primary {
-      background-color: var(--verde-musgo);
-      border: none;
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background-color: #244c38;
-    }
-
-    .links-login {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-
-    .links-login a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: #0d6efd;
-    }
+    .btn-primary { background-color: var(--verde-musgo); border:none; color:#fff; }
+    .btn-primary:hover { background-color:#244c38; }
+    .links-login { margin-top:15px; text-align:center; font-size:0.9rem; }
+    .links-login a { margin:0 10px; text-decoration:none; color:#0d6efd; }
   </style>
 </head>
-
 <body>
 
-  <!-- Splash -->
   <div id="telaSplash" class="tela">
     <img src="icon512.png" alt="Logo" />
   </div>
 
-  <!-- Tela de Login -->
   <div id="telaLogin" class="tela">
     <div class="text-center">
-      <img src="icon512.png" alt="Logo" style="width:150px; height:auto; margin-bottom:30px;" />
+      <img src="icon512.png" alt="Logo" style="width:150px; margin-bottom:30px;" />
       <div class="login-card">
         <form id="formLogin" onsubmit="return false;">
           <input type="email" id="emailLogin" class="form-control mb-2" placeholder="E-mail" required />
           <input type="password" id="senhaLogin" class="form-control mb-2" placeholder="Senha" required />
           <div class="d-grid mb-2">
-            <button class="btn btn-primary" id="btnLogin" type="submit">Entrar</button>
+            <button class="btn btn-primary" id="btnLogin">Entrar</button>
           </div>
         </form>
         <div class="links-login">
@@ -123,21 +70,20 @@
     </div>
   </div>
 
-  <!-- Tela de Cadastro -->
   <div id="telaCadastro" class="tela">
     <div class="login-card">
       <h4 class="text-center mb-4">📝 Criar conta</h4>
       <form id="formCadastro" onsubmit="return false;">
-        <input type="text" class="form-control mb-2" placeholder="Nome completo" id="nome" required />
-        <input type="text" class="form-control mb-2" placeholder="Apelido" id="apelido" required />
-        <input type="email" class="form-control mb-2" placeholder="E-mail" id="email" required />
-        <input type="date" class="form-control mb-2" id="nascimento" required />
-        <input type="text" class="form-control mb-2" placeholder="País" id="pais" required />
-        <input type="text" class="form-control mb-2" placeholder="Telefone" id="telefone" required />
-        <input type="password" class="form-control mb-2" placeholder="Senha" id="senha" required />
-        <input type="password" class="form-control mb-3" placeholder="Confirmar senha" id="confirmar" required />
+        <input type="text" id="nome" class="form-control mb-2" placeholder="Nome completo" required />
+        <input type="text" id="apelido" class="form-control mb-2" placeholder="Apelido" required />
+        <input type="email" id="email" class="form-control mb-2" placeholder="E-mail" required />
+        <input type="date" id="nascimento" class="form-control mb-2" required />
+        <input type="text" id="pais" class="form-control mb-2" placeholder="País" required />
+        <input type="text" id="telefone" class="form-control mb-2" placeholder="Telefone" required />
+        <input type="password" id="senha" class="form-control mb-2" placeholder="Senha" required />
+        <input type="password" id="confirmar" class="form-control mb-3" placeholder="Confirmar senha" required />
         <div class="d-grid">
-          <button class="btn btn-primary" type="submit">Cadastrar</button>
+          <button class="btn btn-primary">Cadastrar</button>
         </div>
       </form>
       <div class="text-center mt-3">
@@ -146,106 +92,150 @@
     </div>
   </div>
 
-  <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
-      authDomain: "gb-financas.firebaseapp.com",
-      projectId: "gb-financas",
-      storageBucket: "gb-financas.appspot.com",
-      messagingSenderId: "1066695487549",
-      appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
-    };
-    firebase.initializeApp(firebaseConfig);
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🔄 index.js carregado');
 
-    // Alternar entre telas
-    function mostrarTela(id) {
-      document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
-      document.getElementById(id).style.display = 'flex';
+  // 1) Inicializa Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
+    authDomain: "gb-financas.firebaseapp.com",
+    projectId: "gb-financas",
+    storageBucket: "gb-financas.appspot.com",
+    messagingSenderId: "1066695487549",
+    appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
+  };
+  firebase.initializeApp(firebaseConfig);
+  console.log('✨ Firebase iniciado');
+
+  // 2) Bloqueios swipe/voltar
+  history.pushState(null, null, location.href);
+  window.addEventListener("popstate", () => history.pushState(null, null, location.href));
+  document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+  // 3) Define o URL do Apps Script
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxZr27uT9CDoZAMZSFT8xjO4Pq0UDRVaKYCFfBXyiiE-US05yo-qGTWGwoU6dIo4rSx/exec';
+  console.log('📑 SHEET_URL:', SHEET_URL);
+
+  // 4) Função de troca de telas
+  function mostrarTela(id) {
+    document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
+    document.getElementById(id).style.display = 'flex';
+  }
+
+  // 5) Splash -> login/dashboard
+  console.log('⏱️ Mostrando splash por 2s');
+  mostrarTela('telaSplash');
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      console.log('✅ Usuário já logado:', user.uid);
+      return location.replace('dashboard.html');
     }
-
-    // Splash → Login
     setTimeout(() => {
-      mostrarTela("telaLogin");
+      console.log('🚪 Exibindo login');
+      mostrarTela('telaLogin');
     }, 2000);
-
-    // Login
-    document.getElementById("btnLogin").addEventListener("click", function () {
-      const email = document.getElementById("emailLogin").value.trim();
-      const senha = document.getElementById("senhaLogin").value.trim();
-
-      if (!email || !senha) {
-        alert("Preencha e-mail e senha");
-        return;
-      }
-
-  firebase.auth().signInWithEmailAndPassword(email, senha)
-  .then(() => {
-    window.location.replace("dashboard.html"); // 🔐 impede voltar com swipe/seta
-  })
-
-  .catch((error) => {
-    alert("❌ Erro ao fazer login:\n" + error.message);
   });
 
+  // 6) Login
+  const btnLogin = document.getElementById('btnLogin');
+  console.log('🔑 Login button:', btnLogin);
+  btnLogin.addEventListener('click', () => {
+    console.log('💥 click login');
+    const email = document.getElementById('emailLogin').value.trim();
+    const senha = document.getElementById('senhaLogin').value.trim();
+    if (!email || !senha) {
+      alert('❌ Preencha e-mail e senha!');
+      return;
+    }
+    firebase.auth().signInWithEmailAndPassword(email, senha)
+      .then(() => location.replace('dashboard.html'))
+      .catch(err => {
+        console.error('❌ Erro login:', err);
+        exibeErroFirebase(err, 'fazer login');
+      });
+  });
 
-    });
-
-    // Cadastro
-    document.getElementById("formCadastro").addEventListener("submit", function () {
-      const email = document.getElementById("email").value.trim();
-      const senha = document.getElementById("senha").value.trim();
-      const confirmar = document.getElementById("confirmar").value.trim();
-
-      if (senha !== confirmar) {
-        alert("❌ As senhas não coincidem.");
-        return;
-      }
-
-      firebase.auth().createUserWithEmailAndPassword(email, senha)
-        .then(() => {
-          alert("✅ Cadastro feito com sucesso!");
-            window.location.replace("index.html");
-        })
-        .catch((error) => {
-          alert("❌ Erro ao cadastrar: " + error.message);
+  // 7) Cadastro (com debug)
+  const formCadastro = document.getElementById('formCadastro');
+  console.log('📝 formCadastro:', formCadastro);
+  formCadastro.addEventListener('submit', e => {
+    e.preventDefault();
+    console.log('💥 submit cadastro');
+    const nome      = document.getElementById('nome').value.trim();
+    const apelido   = document.getElementById('apelido').value.trim();
+    const email     = document.getElementById('email').value.trim();
+    const senha     = document.getElementById('senha').value.trim();
+    const confirmar = document.getElementById('confirmar').value.trim();
+    if (senha !== confirmar) {
+      alert('❌ As senhas não coincidem!');
+      return;
+    }
+    console.log('📤 Criando user com apelido', apelido);
+    firebase.auth().createUserWithEmailAndPassword(email, senha)
+      .then(uc => uc.user.updateProfile({ displayName: apelido }))
+      .then(uc => {
+        console.log('📤 Enviando POST pro Sheets:', {
+          uid: uc.user.uid, nome, apelido,
+          nascimento: document.getElementById('nascimento').value,
+          pais: document.getElementById('pais').value,
+          telefone: document.getElementById('telefone').value
         });
-    });
+        return fetch(SHEET_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            uid:        uc.user.uid,
+            nome, apelido,
+            nascimento: document.getElementById('nascimento').value,
+            pais:       document.getElementById('pais').value,
+            telefone:   document.getElementById('telefone').value
+          })
+        });
+      })
+      .then(res => {
+        console.log('⬅️ POST status:', res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('⬅️ POST body:', data);
+        if (data.status !== 'ok') throw new Error('Resposta inesperada do Sheets');
+        alert('✅ Cadastro completo!');
+        location.replace('dashboard.html');
+      })
+      .catch(err => {
+        console.error('❌ Erro cadastro:', err);
+        exibeErroFirebase(err, 'cadastrar');
+      });
+  });
 
-    // Ir para Cadastro
-    document.getElementById("linkCadastro").addEventListener("click", function (e) {
-      e.preventDefault();
-      mostrarTela("telaCadastro");
-    });
-
-    // Voltar para Login
-    document.getElementById("voltarLogin").addEventListener("click", function (e) {
-      e.preventDefault();
-      mostrarTela("telaLogin");
-    });
-
-
-    // Manter logado
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    window.location.replace("dashboard.html");
+  // 8) Função de tradução de erros
+  function exibeErroFirebase(error, acao) {
+    let msg;
+    switch (error.code) {
+      case 'auth/email-already-in-use': msg = '❌ E-mail já cadastrado!'; break;
+      case 'auth/invalid-email':        msg = '❌ E-mail inválido!';      break;
+      case 'auth/user-not-found':       msg = '❌ Usuário não encontrado!'; break;
+      case 'auth/wrong-password':       msg = '❌ Senha incorreta!';       break;
+      case 'auth/weak-password':        msg = '❌ Senha muito fraca!';      break;
+      default:                          msg = `❌ Erro ao ${acao}. Tente de novo!`;
+    }
+    alert(msg);
   }
+
+  // 9) Navegação entre telas
+  document.getElementById('linkCadastro').addEventListener('click', e => {
+    e.preventDefault();
+    console.log('🔀 Vai pra cadastro');
+    mostrarTela('telaCadastro');
+  });
+  document.getElementById('voltarLogin').addEventListener('click', e => {
+    e.preventDefault();
+    console.log('🔙 Volta pro login');
+    mostrarTela('telaLogin');
+  });
 });
-  
-
-
-
-  </script>
-
-<script>
-// 🔒 BLOQUEIA botão voltar/swipe no celular e PC
-window.history.pushState(null, null, window.location.href);
-window.onpopstate = function () {
-  window.history.pushState(null, null, window.location.href);
-};
-
 </script>
 
- 
 </body>
 </html>
