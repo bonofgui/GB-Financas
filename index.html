@@ -18,14 +18,15 @@
       color-scheme: light dark;
     }
 
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none; /* 🔒 bloqueia swipe voltar */
       font-family: 'Segoe UI', sans-serif;
       background-color: var(--verde-musgo);
       color: #fff;
-      overflow: hidden;
-      height: 100vh;
-      overscroll-behavior: none; /* 💥 impede swipe voltar */
     }
 
     .tela {
@@ -38,6 +39,7 @@
       align-items: center;
       padding: 20px;
       box-sizing: border-box;
+      z-index: 99;
     }
 
     #telaSplash {
@@ -46,6 +48,7 @@
       justify-content: center;
       align-items: center;
       background-color: var(--verde-musgo);
+      z-index: 100;
     }
 
     #telaSplash img {
@@ -105,17 +108,15 @@
     <div class="text-center">
       <img src="icon512.png" alt="Logo" style="width:150px; height:auto; margin-bottom:30px;" />
       <div class="login-card">
-        <form id="formLogin">
+        <form id="formLogin" onsubmit="return false;">
           <input type="email" id="emailLogin" class="form-control mb-2" placeholder="E-mail" required />
           <input type="password" id="senhaLogin" class="form-control mb-2" placeholder="Senha" required />
-        <div class="d-grid mb-2" style="position: relative; z-index: 5;">
-  <button class="btn btn-primary" id="btnLogin" type="button" style="position: relative; z-index: 10;">Entrar</button>
-</div>
-
+          <div class="d-grid mb-2">
+            <button class="btn btn-primary" id="btnLogin" type="submit">Entrar</button>
+          </div>
         </form>
-
         <div class="links-login">
-         <a href="#" id="linkCadastro" style="position: relative; z-index: 10;">Cadastre-se agora</a> |
+          <a href="#" id="linkCadastro">Cadastre-se agora</a> |
           <a href="#">Esqueci minha senha</a>
         </div>
       </div>
@@ -126,7 +127,7 @@
   <div id="telaCadastro" class="tela">
     <div class="login-card">
       <h4 class="text-center mb-4">📝 Criar conta</h4>
-      <form id="formCadastro">
+      <form id="formCadastro" onsubmit="return false;">
         <input type="text" class="form-control mb-2" placeholder="Nome completo" id="nome" required />
         <input type="text" class="form-control mb-2" placeholder="Apelido" id="apelido" required />
         <input type="email" class="form-control mb-2" placeholder="E-mail" id="email" required />
@@ -139,7 +140,6 @@
           <button class="btn btn-primary" type="submit">Cadastrar</button>
         </div>
       </form>
-
       <div class="text-center mt-3">
         <a href="#" id="voltarLogin">🔙 Voltar para login</a>
       </div>
@@ -147,7 +147,7 @@
   </div>
 
   <script>
-    // 🔐 Firebase config
+    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
       authDomain: "gb-financas.firebaseapp.com",
@@ -158,16 +158,19 @@
     };
     firebase.initializeApp(firebaseConfig);
 
-    // ⏱ Splash → Login
+    // Alternar entre telas
+    function mostrarTela(id) {
+      document.querySelectorAll('.tela').forEach(t => t.style.display = 'none');
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    // Splash → Login
     setTimeout(() => {
-      document.getElementById("telaSplash").style.display = "none";
-      document.getElementById("telaLogin").style.display = "flex";
+      mostrarTela("telaLogin");
     }, 2000);
 
-    // ✉️ Login com e-mail/senha
-    document.getElementById("formLogin").addEventListener("submit", function (e) {
-      e.preventDefault();
-
+    // Login
+    document.getElementById("btnLogin").addEventListener("click", function () {
       const email = document.getElementById("emailLogin").value.trim();
       const senha = document.getElementById("senhaLogin").value.trim();
 
@@ -186,23 +189,8 @@
         });
     });
 
-    // 🔁 Alternar entre login e cadastro
-    document.getElementById("linkCadastro").addEventListener("click", function (e) {
-      e.preventDefault();
-      document.getElementById("telaLogin").style.display = "none";
-      document.getElementById("telaCadastro").style.display = "flex";
-    });
-
-    document.getElementById("voltarLogin").addEventListener("click", function (e) {
-      e.preventDefault();
-      document.getElementById("telaCadastro").style.display = "none";
-      document.getElementById("telaLogin").style.display = "flex";
-    });
-
-    // 📝 Cadastro
-    document.getElementById("formCadastro").addEventListener("submit", function (e) {
-      e.preventDefault();
-
+    // Cadastro
+    document.getElementById("formCadastro").addEventListener("submit", function () {
       const email = document.getElementById("email").value.trim();
       const senha = document.getElementById("senha").value.trim();
       const confirmar = document.getElementById("confirmar").value.trim();
@@ -222,13 +210,25 @@
         });
     });
 
-    // 🔒 Bloqueia voltar no celular
+    // Ir para Cadastro
+    document.getElementById("linkCadastro").addEventListener("click", function (e) {
+      e.preventDefault();
+      mostrarTela("telaCadastro");
+    });
+
+    // Voltar para Login
+    document.getElementById("voltarLogin").addEventListener("click", function (e) {
+      e.preventDefault();
+      mostrarTela("telaLogin");
+    });
+
+    // Bloquear voltar no celular
     history.pushState(null, null, location.href);
     window.onpopstate = function () {
       history.go(1);
     };
 
-    // ✅ NUNCA desloga sozinho (manter sessão ativa)
+    // Manter logado
     firebase.auth().onAuthStateChanged((user) => {
       if (user && window.location.href.includes("index.html")) {
         window.location.href = "dashboard.html";
