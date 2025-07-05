@@ -159,38 +159,29 @@
 </div>
 
 <!-- Tela de cadastro -->
-<script>
-  document.getElementById("formCadastro").addEventListener("submit", function (e) {
-    e.preventDefault();
+<div id="telaCadastro" class="tela">
+  <div class="login-card">
+    <h4 class="text-center mb-4">📝 Criar conta</h4>
+    <form id="formCadastro">
+      <input type="text" class="form-control mb-2" placeholder="Nome completo" id="nome" required />
+      <input type="text" class="form-control mb-2" placeholder="Apelido" id="apelido" required />
+      <input type="email" class="form-control mb-2" placeholder="E-mail" id="email" required />
+      <input type="date" class="form-control mb-2" id="nascimento" required />
+      <input type="text" class="form-control mb-2" placeholder="País" id="pais" required />
+      <input type="text" class="form-control mb-2" placeholder="Telefone" id="telefone" required />
+      <input type="password" class="form-control mb-2" placeholder="Senha" id="senha" required />
+      <input type="password" class="form-control mb-3" placeholder="Confirmar senha" id="confirmar" required />
+      <div class="d-grid">
+        <button class="btn btn-primary" type="submit">Cadastrar</button>
+      </div>
+    </form>
 
-    const nome = document.getElementById("nome").value.trim();
-    const apelido = document.getElementById("apelido").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const nascimento = document.getElementById("nascimento").value.trim();
-    const pais = document.getElementById("pais").value.trim();
-    const telefone = document.getElementById("telefone").value.trim();
-    const senha = document.getElementById("senha").value.trim();
-    const confirmar = document.getElementById("confirmar").value.trim();
+    <div class="text-center mt-3">
+      <a href="#" id="voltarLogin">🔙 Voltar para login</a>
+    </div>
+  </div>
+</div>
 
-    if (senha !== confirmar) {
-      alert("❌ As senhas não coincidem.");
-      return;
-    }
-
-    firebase.auth().createUserWithEmailAndPassword(email, senha)
-      .then((userCredential) => {
-        const user = userCredential.user;
-
-        // (Opcional) Aqui você pode salvar no Google Sheets depois
-        alert("✅ Cadastro feito com sucesso!");
-        window.location.href = "index.html"; // volta pro login
-      })
-      .catch((error) => {
-        console.error("Erro ao cadastrar:", error.message);
-        alert("❌ Erro ao cadastrar: " + error.message);
-      });
-  });
-</script>
 
 
 
