@@ -255,6 +255,13 @@
 
   // Assim que a página carregar
   window.onload = function () {
+    document.getElementById("linkCadastro").addEventListener("click", function(e) {
+    e.preventDefault();
+    document.getElementById("telaLogin").style.display = "none";
+    document.getElementById("telaCadastro").style.display = "flex";
+    console.log("🟢 Tela de cadastro ativada");
+  });
+
     const btn = document.getElementById("btnGoogle");
 
     // Se o cara já está logado, manda direto pro dashboard
