@@ -108,13 +108,14 @@
         <form id="formLogin">
           <input type="email" id="emailLogin" class="form-control mb-2" placeholder="E-mail" required />
           <input type="password" id="senhaLogin" class="form-control mb-2" placeholder="Senha" required />
-          <div class="d-grid mb-2">
-            <button class="btn btn-primary" id="btnLogin" type="submit">Entrar</button>
-          </div>
+        <div class="d-grid mb-2" style="position: relative; z-index: 5;">
+  <button class="btn btn-primary" id="btnLogin" type="button" style="position: relative; z-index: 10;">Entrar</button>
+</div>
+
         </form>
 
         <div class="links-login">
-          <a href="#" id="linkCadastro">Cadastre-se agora</a> |
+         <a href="#" id="linkCadastro" style="position: relative; z-index: 10;">Cadastre-se agora</a> |
           <a href="#">Esqueci minha senha</a>
         </div>
       </div>
