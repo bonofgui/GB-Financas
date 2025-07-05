@@ -205,7 +205,7 @@
       firebase.auth().createUserWithEmailAndPassword(email, senha)
         .then(() => {
           alert("✅ Cadastro feito com sucesso!");
-          window.location.href = "index.html";
+            window.location.replace("index.html");
         })
         .catch((error) => {
           alert("❌ Erro ao cadastrar: " + error.message);
@@ -228,21 +228,22 @@
     // Manter logado
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    // Já logado? vai direto pro dashboard
-    window.location.replace("dashboard.html"); // 🔒 sem histórico
+    window.location.replace("dashboard.html");
   }
 });
+  
 
 
 
   </script>
 
 <script>
-  // 🔒 BLOQUEIA botão voltar/swipe no celular e PC
+// 🔒 BLOQUEIA botão voltar/swipe no celular e PC
+window.history.pushState(null, null, window.location.href);
+window.onpopstate = function () {
   window.history.pushState(null, null, window.location.href);
-  window.onpopstate = function () {
-    window.history.pushState(null, null, window.location.href);
-  };
+};
+
 </script>
 
  

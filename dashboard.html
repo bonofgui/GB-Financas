@@ -30,8 +30,8 @@
     }
   </style>
 </head>
-<body>
 
+<body>
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>👋 Bem-vindo, <span id="userName">Usuário</span></h2>
@@ -58,64 +58,65 @@
     </div>
   </div>
 
-<script>
-  // Firebase config (mesmo do index)
-  const firebaseConfig = {
-    apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
-    authDomain: "gb-financas.firebaseapp.com",
-    projectId: "gb-financas",
-    storageBucket: "gb-financas.appspot.com",
-    messagingSenderId: "1066695487549",
-    appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAFmnEC6Wu_gY7reaX5H1V-eLSM9o_ao14",
+      authDomain: "gb-financas.firebaseapp.com",
+      projectId: "gb-financas",
+      storageBucket: "gb-financas.appspot.com",
+      messagingSenderId: "1066695487549",
+      appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
+    };
 
-  firebase.initializeApp(firebaseConfig);
+    firebase.initializeApp(firebaseConfig);
 
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    document.getElementById('userName').textContent = user.displayName || "Usuário";
-  } else {
-    window.location.replace("index.html"); // impede voltar com swipe/seta
-  }
-});
+    // ✅ Impede voltar mesmo com swipe ou botão do navegador
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function () {
+      window.history.pushState(null, null, window.location.href);
+    };
 
-
-  function logout() {
-  firebase.auth().signOut().then(() => {
-  window.location.replace("index.html");
-});
-
-  }
-
-  // Gráfico de gastos
-  const ctx = document.getElementById('graficoGastos').getContext('2d');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-      datasets: [{
-        label: 'Gastos (R$)',
-        data: [100, 230, 180, 90, 310, 150, 220],
-        backgroundColor: '#ffc107'
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          ticks: { color: '#fff' },
-          beginAtZero: true
-        },
-        x: {
-          ticks: { color: '#fff' }
-        }
-      },
-      plugins: {
-        legend: { labels: { color: '#fff' } }
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        document.getElementById('userName').textContent = user.displayName || "Usuário";
+      } else {
+        window.location.replace("index.html"); // 🔒 redireciona sem manter histórico
       }
-    }
-  });
-</script>
+    });
 
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.replace("index.html");
+      });
+    }
+
+    const ctx = document.getElementById('graficoGastos').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+        datasets: [{
+          label: 'Gastos (R$)',
+          data: [100, 230, 180, 90, 310, 150, 220],
+          backgroundColor: '#ffc107'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            ticks: { color: '#fff' },
+            beginAtZero: true
+          },
+          x: {
+            ticks: { color: '#fff' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        }
+      }
+    });
+  </script>
 </body>
 </html>
