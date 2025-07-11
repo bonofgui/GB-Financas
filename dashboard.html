@@ -6,8 +6,6 @@
   <title>GB Finanças - Painel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
@@ -16,46 +14,72 @@
       background-color: #1f3c2c;
       color: #fff;
       font-family: 'Segoe UI', sans-serif;
-      padding: 20px;
-    }
-    .card {
-      background-color: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
     }
     .btn-logout {
       background: #ffc107;
       color: #000;
       border: none;
     }
+    .centered-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+    }
+    .floating-add-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 30px;
+      background-color: #ffc107;
+      color: #000;
+      border: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    #mainContent {
+      display: none;
+      padding: 20px;
+    }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2>👋 Bem-vindo, <span id="userName">Usuário</span></h2>
-      <button class="btn btn-logout" onclick="logout()">Sair</button>
-    </div>
 
-    <div class="mb-4">
-      <h4>💰 Saldo atual: <strong>R$ 8.420,00</strong></h4>
-    </div>
+  <!-- TOPO SEMPRE VISÍVEL -->
+  <div class="d-flex justify-content-between align-items-center p-3">
+    <h2>👋 <span id="userNameTop">Bem-vindo</span></h2>
+    <button id="btnLogout" class="btn btn-logout">Sair</button>
+  </div>
 
-    <div class="card p-4 mb-4">
-      <h5>📊 Gastos da semana</h5>
-      <canvas id="graficoGastos" height="100"></canvas>
-    </div>
+  <!-- BOTÃO DE CRIAÇÃO -->
+  <div id="criarControleDiv" class="text-center">
+    <button id="btnCriarControle" class="btn btn-warning centered-btn">＋ Criar Controle de Gastos</button>
+  </div>
 
-    <div class="card p-4">
-      <h5>📄 Últimas transações</h5>
-      <ul class="list-group list-group-flush text-white">
-        <li class="list-group-item bg-transparent">🛒 Mercado - R$ 120,00</li>
-        <li class="list-group-item bg-transparent">⛽ Gasolina - R$ 200,00</li>
-        <li class="list-group-item bg-transparent">💡 Energia - R$ 340,00</li>
-        <li class="list-group-item bg-transparent">📱 Celular - R$ 90,00</li>
-      </ul>
+  <!-- DASHBOARD PRINCIPAL -->
+  <div id="mainContent">
+    <div class="container">
+      <div class="mb-4">
+        <h4>💰 Saldo atual: <strong>R$ 0,00</strong></h4>
+      </div>
+
+      <div class="card p-4 mb-4">
+        <h5>📊 Gastos da semana</h5>
+        <canvas id="graficoGastos" height="100"></canvas>
+      </div>
+
+      <div class="card p-4">
+        <h5>📄 Últimas transações</h5>
+        <p>Ainda não há dados.</p>
+      </div>
     </div>
+    <button class="floating-add-btn">＋</button>
   </div>
 
   <script>
@@ -67,56 +91,98 @@
       messagingSenderId: "1066695487549",
       appId: "1:1066695487549:web:a698ce649c62fc73edfa54"
     };
-
     firebase.initializeApp(firebaseConfig);
 
-    // ✅ Impede voltar mesmo com swipe ou botão do navegador
-    window.history.pushState(null, null, window.location.href);
-    window.onpopstate = function () {
-      window.history.pushState(null, null, window.location.href);
-    };
+ const SHEET_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSkL5hS3yAUiCaX1H7vAOGe4HRzkX0nmDwPtA_owJm7uJGAZMyVmQ5zR4_bpfdY2DDAE_cABEhZ2Vd4CpyLBi9yKUlkCVkem8aIB5a_Gn8cKDSH-w-TupbQP8W7wsKsVkCy8R5HkAjGVxi3lPhfAyp1C4j5hHwC1zqe7ghPQ6ZBfP2Bmz4Ttuw-KnsppeHhGMSAmlvW0Kzax4UzXHNxCgvl6TZWSOsC9eNY25d4y0hL0tmyi8B4a0Mo0clmus-A1rACW8e8twu4gj8y5fi1A-bl8lggN3k3TXOCVfEmC43DjoFkZiEJonUfJkAfkAib-MIlJpoel6fNaJj5g0AyuNby_g5dLHlEjH5';
 
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        document.getElementById('userName').textContent = user.displayName || "Usuário";
-      } else {
-        window.location.replace("index.html"); // 🔒 redireciona sem manter histórico
-      }
+
+    // Sair funciona sempre
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      firebase.auth().signOut().then(() => location.replace('index.html'));
+    });
+// Controle do botão criar
+document.getElementById('btnCriarControle').addEventListener('click', async () => {
+  const user = firebase.auth().currentUser;
+  if (!user) return alert("Você precisa estar logado.");
+  const uid = user.uid;
+
+  const nome = prompt("Como gostaria de ser chamado?");
+  if (!nome) return alert("Nome inválido.");
+
+  try {
+    const resPost = await fetch(SHEET_URL, {
+      method: 'POST',
+      body: JSON.stringify({ uid, nome }),
+      headers: { 'Content-Type': 'application/json' }
     });
 
-    function logout() {
-      firebase.auth().signOut().then(() => {
-        window.location.replace("index.html");
+    const texto = await resPost.text();
+    console.log('📤 RESPOSTA DO SCRIPT:', texto);
+    alert(`🔎 Resposta do servidor:\n${texto}`);
+
+    document.getElementById('userNameTop').textContent = `Bem-vindo, ${nome}`;
+    document.getElementById('criarControleDiv').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    iniciarDashboard();
+
+  } catch (err) {
+    console.error('❌ Erro ao criar aba:', err);
+    alert(`❌ ERRO REAL CAPTURADO:\n${err.message || err}`);
+  }
+});
+
+// Carrega nome do usuário
+firebase.auth().onAuthStateChanged(async user => {
+  if (!user) return location.replace('index.html');
+  await user.reload();
+
+  const uid = user.uid;
+  try {
+    const res = await fetch(`${SHEET_URL}?uid=${uid}`);
+    const data = await res.json();
+
+    if (!data.nome) {
+      // ainda não criou controle
+      document.getElementById('criarControleDiv').style.display = 'block';
+      document.getElementById('mainContent').style.display = 'none';
+    } else {
+      // já tem aba criada
+      document.getElementById('userNameTop').textContent = `Bem-vindo, ${data.nome}`;
+      document.getElementById('criarControleDiv').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      iniciarDashboard();
+    }
+  } catch (err) {
+    console.error('❌ Erro ao carregar nome:', err);
+    alert(`❌ ERRO AO VERIFICAR PERFIL:\n${err.message || err}`);
+  }
+});
+
+
+    function iniciarDashboard() {
+      const ctx = document.getElementById('graficoGastos').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+          datasets: [{
+            label: 'Gastos (R$)',
+            data: [0,0,0,0,0,0,0],
+            backgroundColor: '#ffc107'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { ticks:{color:'#fff'}, beginAtZero:true },
+            x: { ticks:{color:'#fff'} }
+          },
+          plugins: {
+            legend: { labels:{color:'#fff'} }
+          }
+        }
       });
     }
-
-    const ctx = document.getElementById('graficoGastos').getContext('2d');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
-        datasets: [{
-          label: 'Gastos (R$)',
-          data: [100, 230, 180, 90, 310, 150, 220],
-          backgroundColor: '#ffc107'
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            ticks: { color: '#fff' },
-            beginAtZero: true
-          },
-          x: {
-            ticks: { color: '#fff' }
-          }
-        },
-        plugins: {
-          legend: { labels: { color: '#fff' } }
-        }
-      }
-    });
   </script>
 </body>
 </html>
